@@ -1,6 +1,7 @@
 package com.kainos.ea.validator;
 
 import com.kainos.ea.exception.BankNumberLengthException;
+import com.kainos.ea.exception.NinLengthException;
 import com.kainos.ea.exception.SalaryTooLowException;
 import com.kainos.ea.model.EmployeeRequest;
 import org.junit.jupiter.api.Test;
@@ -11,8 +12,11 @@ class EmployeeValidatorTest {
 
     EmployeeValidator employeeValidator = new EmployeeValidator();
 
+    EmployeeRequest employeeRequest1= new EmployeeRequest(
+            25000F,"John","Doe","email@2m.com","123","456","Gdańsk","pom","80-123","Poland","12312314","32225253255","123"
+    );
     @Test
-    public void isValidEmployee_shouldReturnTrue_whenValidEmployee() throws SalaryTooLowException, BankNumberLengthException {
+    public void isValidEmployee_shouldReturnTrue_whenValidEmployee() throws SalaryTooLowException, BankNumberLengthException, NinLengthException {
         EmployeeRequest employeeRequest = new EmployeeRequest(
                 30000,
                 "Tim",
@@ -66,6 +70,17 @@ class EmployeeValidatorTest {
     This should pass without code changes
      */
 
+    @Test
+    public void isValidEmployee_shouldThrowBankNumberLengthException_whenBankNumberIsLessThan8Characters() throws BankNumberLengthException, SalaryTooLowException {
+       EmployeeRequest employeeRequest= new EmployeeRequest(
+               25000F,"John","Doe","email@2m.com","123","456","Gdańsk","pom","80-123","Poland","12312314","1234567","123"
+       );
+
+       assertThrows(BankNumberLengthException.class,
+               ()-> {employeeValidator.isValidEmployee(employeeRequest);
+       });
+    }
+
     /*
     Unit Test Exercise 2
 
@@ -77,6 +92,17 @@ class EmployeeValidatorTest {
 
     This should pass without code changes
      */
+
+    @Test
+    public void isValidEmployee_shouldThrowBankNumberLengthExceptionWhenBankNumberIsLongerThan8Characters(){
+        EmployeeRequest employeeRequest= new EmployeeRequest(
+                25000F,"John","Doe","email@2m.com","123","456","Gdańsk","pom","80-123","Poland","12312314","123456789","123"
+        );
+
+        assertThrows(BankNumberLengthException.class,
+                ()-> {employeeValidator.isValidEmployee(employeeRequest);
+                });
+    }
 
     /*
     Unit Test Exercise 3
@@ -90,6 +116,17 @@ class EmployeeValidatorTest {
     This should fail, make code changes to make this test pass
      */
 
+    @Test
+    public void isValidEmployee_shouldReturnFalse_whenFistNameIsLongerThan50Characters() throws BankNumberLengthException, SalaryTooLowException, NinLengthException {
+        EmployeeRequest employeeRequest= new EmployeeRequest(
+                25000F,"John12345678901234567890123456789012345678901234567890","Doe","email@2m.com","123","456","Gdańsk","pom","80-123","Poland","12312314","12345678","123"
+        );
+
+        boolean result = employeeValidator.isValidEmployee(employeeRequest);
+
+        assertFalse(result);
+    }
+
     /*
     Unit Test Exercise 4
 
@@ -102,6 +139,17 @@ class EmployeeValidatorTest {
     This should fail, make code changes to make this test pass
      */
 
+    @Test
+    public void isValidEmployee_shouldReturnFalse_whenLastNameIsLongerThan50Characters() throws BankNumberLengthException, SalaryTooLowException, NinLengthException {
+        EmployeeRequest employeeRequest= new EmployeeRequest(
+                25000F,"John","D12345678901234567890123456789012345678901234567890","email@2m.com","123","456","Gdańsk","pom","80-123","Poland","12312314","12345678","123"
+        );
+
+        boolean result = employeeValidator.isValidEmployee(employeeRequest);
+
+        assertFalse(result);
+    }
+
     /*
     Unit Test Exercise 5
 
@@ -113,6 +161,17 @@ class EmployeeValidatorTest {
 
     This should fail, make code changes to make this test pass
      */
+    @Test
+    public void isValidEmployee_shouldThrowNinLengthException_whenNinIsLongerThan8Character() throws BankNumberLengthException, SalaryTooLowException {
+        EmployeeRequest employeeRequest= new EmployeeRequest(
+                25000F,"John","Doe","email@2m.com","123","456","Gdańsk","pom","80-123","Poland","12312314","12345678","123456789"
+        );
+
+
+        assertThrows(NinLengthException.class,
+                ()->{employeeValidator.isValidEmployee(employeeRequest);
+        });
+    }
 
     /*
     Unit Test Exercise 6
@@ -125,4 +184,16 @@ class EmployeeValidatorTest {
 
     This should fail, make code changes to make this test pass
      */
+
+    @Test
+    public void isValidEmployee_shouldThrowNinLengthException_whenNinLengthIsLessThan8Characters(){
+        EmployeeRequest employeeRequest= new EmployeeRequest(
+                25000F,"John","Doe","email@2m.com","123","456","Gdańsk","pom","80-123","Poland","12312314","12345678","1234567"
+        );
+
+        assertThrows(NinLengthException.class,
+                ()->{employeeValidator.isValidEmployee(employeeRequest);
+                });
+
+    }
 }
