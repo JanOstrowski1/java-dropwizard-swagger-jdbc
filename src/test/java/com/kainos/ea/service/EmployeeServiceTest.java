@@ -174,6 +174,5 @@ class EmployeeServiceTest {
         List<Employee> result = employeeService.getEmployees();
 
         assertEquals(result,employeeList);
-
     }
 }

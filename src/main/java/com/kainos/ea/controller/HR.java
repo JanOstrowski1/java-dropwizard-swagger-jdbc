@@ -66,7 +66,7 @@ public class HR {
     @GET
     @Path("/salesEmployee/{salesEmployeeId}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getSalesEmployeeById(@PathParam("salesEmployeeId") int salesEmployeeId){
+    public Response getSalesEmployeeById(@PathParam("salesEmployeeId") int salesEmployeeId) {
         try {
             return Response.status(HttpStatus.OK_200).entity(salesEmployeeService.getSalesEmployee(salesEmployeeId)).build();
         } catch (SQLException | DatabaseConnectionException e) {
@@ -79,16 +79,20 @@ public class HR {
     @Path("/employee")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response createEmployee(EmployeeRequest employee) throws DatabaseConnectionException, SalaryTooLowException, BankNumberLengthException, NinLengthException {
-        if (employeeValidator.isValidEmployee(employee)) {
-            try {
-                int id = employeeService.insertEmployee(employee);
-                return Response.status(HttpStatus.CREATED_201).entity(id).build();
-            } catch (Exception e) {
-                System.out.println(e);
-                return Response.status(HttpStatus.INTERNAL_SERVER_ERROR_500).build();
+    public Response createEmployee(EmployeeRequest employee) {
+        try {
+            if (employeeValidator.isValidEmployee(employee)) {
+                try {
+                    int id = employeeService.insertEmployee(employee);
+                    return Response.status(HttpStatus.CREATED_201).entity(id).build();
+                } catch (DatabaseConnectionException | SQLException e) {
+                    System.out.println(e);
+                    return Response.status(HttpStatus.INTERNAL_SERVER_ERROR_500).build();
+                }
+            } else {
+                return Response.status(HttpStatus.BAD_REQUEST_400).build();
             }
-        } else {
+        } catch (SalaryTooLowException | BankNumberLengthException | NinLengthException e) {
             return Response.status(HttpStatus.BAD_REQUEST_400).build();
         }
     }
